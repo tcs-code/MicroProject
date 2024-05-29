@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cricket Match Win Probability</title>
+</head>
+<body>
+    <h1>Cricket Match Win Probability</h1>
+    <form id="prediction-form">
+        <label for="team1">Select Team 1:</label>
+        <select id="team1">
+            {% for team in teams %}
+                <option value="{{ team }}">{{ team }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <label for="team2">Select Team 2:</label>
+        <select id="team2">
+            {% for team in teams %}
+                <option value="{{ team }}">{{ team }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <button type="button" onclick="getPrediction()">Go</button>
+    </form>
+    <br>
+    <div id="result">
+        <p id="team1-result"></p>
+        <p id="team2-result"></p>
+    </div>
+    <script>
+        async function getPrediction() {
+            const team1 = document.getElementById('team1').value;
+            const team2 = document.getElementById('team2').value;
+
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ team1, team2 }),
+            });
+
+            const data = await response.json();
+
+            document.getElementById('team1-result').innerText = `${data.team1} has a ${data.team1_win_prob.toFixed(2)}% chance of winning.`;
+            document.getElementById('team2-result').innerText = `${data.team2} has a ${data.team2_win_prob.toFixed(2)}% chance of winning.`;
+        }
+    </script>
+</body>
+</html>
